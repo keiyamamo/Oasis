@@ -5,10 +5,11 @@ __copyright__ = "Copyright (C) 2013 " + __author__
 __license__ = "GNU Lesser GPL version 3 or any later version"
 
 from ..NSfracStep import *
-try:
-    from matplotlib import pyplot as plt
-except:
-    pass
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D  
+from matplotlib import cm
+import numpy as np
+
 
 # Override some problem specific parameters
 def problem_parameters(NS_parameters, NS_expressions, **NS_namespace):
@@ -18,13 +19,13 @@ def problem_parameters(NS_parameters, NS_expressions, **NS_namespace):
         dt=0.001,
         Nx=20, Ny=20,
         folder="taylorgreen2D_results",
-        plot_interval=1000,
-        save_step=10000,
-        checkpoint=10000,
-        print_intermediate_info=1000,
-        compute_error=1,
+        plot_interval=100,
+        save_step=100,
+        checkpoint=100,
+        print_intermediate_info=100,
+        compute_error=100,
         use_krylov_solvers=True,
-        velocity_degree=1,
+        velocity_degree=2,
         pressure_degree=1,
         krylov_report=False)
 
@@ -104,10 +105,7 @@ def temporal_hook(q_, t, nu, VV, dt, plot_interval, initial_fields, tstep, sys_c
         plot(q_['u0'], title='u')
         plot(q_['u1'], title='v')
         plot(q_['p'], title='p')
-        try:
-            plt.show()
-        except:
-            pass
+        
 
     if tstep % compute_error == 0:
         err = {}
@@ -131,6 +129,7 @@ def temporal_hook(q_, t, nu, VV, dt, plot_interval, initial_fields, tstep, sys_c
 
 def theend_hook(mesh, q_, t, dt, nu, VV, sys_comp, total_error, initial_fields, **NS_namespace):
     final_error = zeros(len(sys_comp))
+    
     for i, ui in enumerate(sys_comp):
         if 'IPCS' in NS_parameters['solver']:
             deltat = dt / 2. if ui is 'p' else 0.
