@@ -3,13 +3,14 @@ __date__ = "2014-04-10"
 __copyright__ = "Copyright (C) 2014 " + __author__
 __license__ = "GNU Lesser GPL version 3 or any later version"
 
-from dolfin import Mesh
+#from dolfin import Mesh
+from fenics import Mesh
 import os
 
 if not os.path.isfile("mesh/Skewed2D.xml"):
     try:
         os.system("gmsh mesh/Skewed2D.geo -2 -o mesh/Skewed2D.msh")
-        os.system("dolfin-convert mesh/Skewed2D.msh mesh/Skewed2D.xml")
+        os.system("meshio-convert mesh/Skewed2D.msh mesh/Skewed2D.xml") # seems like it does not work properly
         os.system("rm mesh/Skewed2D.msh")
     except RuntimeError:
         raise "Gmsh is required to run this demo"
