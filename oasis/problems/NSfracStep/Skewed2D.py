@@ -11,8 +11,13 @@ from ..Skewed2D import *
 def problem_parameters(NS_parameters, **NS_namespace):
     NS_parameters.update(
         nu=0.1,
-        T=10.0,
-        dt=0.05,
+        T=1.0,
+        dt=0.001,
+        folder="Skewed2D_results",
+        plot_interval=100,
+        save_step=100,
+        checkpoint=100,
+        print_intermediate_info=100,
         use_krylov_solvers=True,
         print_velocity_pressure_convergence=True)
 
