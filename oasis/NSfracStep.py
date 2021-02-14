@@ -35,6 +35,7 @@ problems/NSfracStep/__init__.py for all possible parameters.
 import importlib
 from oasis.common import *
 
+
 commandline_kwargs = parse_command_line()
 
 # Find the problem module
@@ -156,8 +157,11 @@ u_sol, p_sol, c_sol = get_solvers(**vars())
 
 # Get constant body forces
 f = body_force(**vars())
-assert(isinstance(f, Coefficient))
+# comment out as f is no longer constant in the Guermond test
+# assert(isinstance(f, Coefficient))
 b0 = dict((ui, assemble(v * f[i] * dx)) for i, ui in enumerate(u_components))
+
+
 
 # Get scalar sources
 fs = scalar_source(**vars())
@@ -183,6 +187,9 @@ while t < (T - tstep * DOLFIN_EPS) and not stop:
     num_iter = max(iters_on_first_timestep, max_iter) if tstep <= 10 else max_iter
 
     start_timestep_hook(**vars())
+    # update source term (body force) in each time step 
+    f = body_force(**vars())    
+    b0 = dict((ui, assemble(v * f[i] * dx)) for i, ui in enumerate(u_components))
 
     while udiff[0] > max_error and inner_iter < num_iter:
         inner_iter += 1
@@ -199,7 +206,7 @@ while t < (T - tstep * DOLFIN_EPS) and not stop:
             velocity_tentative_hook(**vars())
             velocity_tentative_solve(**vars())
             t1.stop()
-
+        
         t0 = OasisTimer("Pressure solve", print_solve_info)
         pressure_assemble(**vars())
         pressure_hook(**vars())
